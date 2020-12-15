@@ -4,8 +4,8 @@ import { SemVer, rsort } from 'semver';
 import gitSemVerTags from 'git-semver-tags';
 import * as core from '@actions/core';
 
-async function getSortedTags(): Promise<string[]> {
-  return rsort(await promisify(gitSemVerTags)());
+async function getTags(): Promise<string[]> {
+  return await promisify(gitSemVerTags)();
 }
 
 /**
@@ -19,6 +19,7 @@ async function getSortedTags(): Promise<string[]> {
 
 export function getNextVersion(version: string, tags: string[]): string {
   const semVer = new SemVer(version);
+  tags = rsort(tags);
 
   if (semVer === null || semVer.prerelease.length === 1) {
     throw new Error(`Invalid semver - ${version}`);
@@ -52,7 +53,7 @@ async function run(): Promise<void> {
     core.setOutput('version', version);
     console.log(`version: ${version}`);
 
-    const tags = await getSortedTags();
+    const tags = await getTags();
     core.setOutput('tags', tags);
     console.log(`tags: ${tags}`);
 
