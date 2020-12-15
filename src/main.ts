@@ -22,18 +22,29 @@ export function getNextVersion(version: string, tags: string[]): string {
   tags = rsort(tags);
 
   if (semVer === null || semVer.prerelease.length === 1) {
-    throw new Error(`Invalid semver - ${version}`);
+    throw new Error(`Invalid semver: ${version}`);
   }
 
   let nextVer: SemVer | null = null;
 
   if (semVer.prerelease.length === 0) {
     if (tags.includes(semVer.version)) {
+      if (semVer.patch > 0) {
+        throw new Error(
+          `Version in package.json is ${version} but tag already exists. Set patch to 0 to enable auto-increment.`,
+        );
+      }
       nextVer = new SemVer(tags[0]).inc('patch');
     }
   } else {
     for (const tag of tags) {
-      if (tag.startsWith(semVer.version.substring(0, semVer.version.lastIndexOf('.') + 1))) {
+      const tagSemVer = new SemVer(tag);
+      if (isSameRelease(tagSemVer, semVer)) {
+        if (preReleaseNumber(semVer) > 0) {
+          throw new Error(
+            `Version in package.json is ${version} but tag already exists. Set pre-release to 0 to enable auto-increment.`,
+          );
+        }
         nextVer = new SemVer(tag).inc('prerelease');
         break;
       }
@@ -45,6 +56,14 @@ export function getNextVersion(version: string, tags: string[]): string {
   }
 
   return nextVer.version;
+}
+
+function isSameRelease(v1: SemVer, v2: SemVer): boolean {
+  return v1.major === v2.major && v1.minor === v2.minor && v1.patch === v2.patch;
+}
+
+function preReleaseNumber(v: SemVer): number {
+  return v.prerelease[1] as number;
 }
 
 async function run(): Promise<void> {
