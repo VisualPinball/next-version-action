@@ -1,13 +1,19 @@
 name: 'VisualPinball.NextReleaseAction'
 description: 'Action used for determining the next version of VisualPinball.* projects.'
 author: 'Jason Millard <jsm174@gmail.com>'
+inputs:
+  tagPrefix:
+    required: false
+    description: 'Prefix when tagging the release'
 outputs:
   version:
-    description: 'current package.json version'
+    description: 'Current version in package.json'
   tags:
-    description: 'reverse sorted git tags in semver format'
+    description: 'Reverse sorted git tags in semver format'
   nextVersion:
-    description: 'calculated next version'
+    description: 'Computed next version'
+  nextTag:
+    description: 'Computed next version with prefix'
 runs:
   using: 'node12'
   main: 'dist/index.js'

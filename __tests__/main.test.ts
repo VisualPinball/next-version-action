@@ -5,7 +5,7 @@ beforeAll(async () => {
 });
 
 test('should use version from package.json if no tag is available', () => {
-  const nextVersion = getNextVersion("0.0.1-preview.0", []);
+  const nextVersion = getNextVersion('0.0.1-preview.0', []);
   expect(nextVersion).toBe('0.0.1-preview.0');
 });
 
@@ -50,7 +50,7 @@ test('should use bump latest tag if one tag was skipped', () => {
 });
 
 test('should use major version from major package.json if no tag matched', () => {
-  const nextVersion = getNextVersion('0.0.1',  [
+  const nextVersion = getNextVersion('0.0.1', [
     '0.0.1-preview.3',
     '0.0.1-preview.2',
     '0.0.1-preview.1',
@@ -65,7 +65,7 @@ test('should use pre-release version from pre-release package.json if no tag mat
     '0.0.1-preview.3',
     '0.0.1-preview.2',
     '0.0.1-preview.1',
-    '0.0.1-preview.0'
+    '0.0.1-preview.0',
   ]);
   expect(nextVersion).toBe('0.1.0-preview.0');
 });
@@ -84,16 +84,12 @@ test('should bump final version if tag already exists and ends with 0', () => {
 });
 
 test('should throw an error if final version is already tagged and does not end with 0', () => {
-  const nextVersion = () => getNextVersion('0.2.1', [
-    '0.2.1',
-  ]);
+  const nextVersion = () => getNextVersion('0.2.1', ['0.2.1']);
   expect(nextVersion).toThrow(Error);
 });
 
 test('should throw an error if pre-release version is already tagged and does not end with 0', () => {
-  const nextVersion = () => getNextVersion('0.2.0-preview.1', [
-    '0.2.0-preview.1',
-  ]);
+  const nextVersion = () => getNextVersion('0.2.0-preview.1', ['0.2.0-preview.1']);
   expect(nextVersion).toThrow(Error);
 });
 
@@ -102,4 +98,3 @@ test('should throw an error for wrong versions', () => {
   expect(() => getNextVersion('1.0', [])).toThrow(Error);
   expect(() => getNextVersion('~1.0.0', [])).toThrow(Error);
 });
-
