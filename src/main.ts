@@ -27,8 +27,8 @@ export function getNextVersion(version: string, tags: string[]): string {
 
   let nextVer: SemVer | null = null;
 
-  if (semVer.prerelease.length === 0) {
-    if (tags.includes(semVer.version)) {
+  if (!isPreRelease(semVer)) {
+    if (tagsInclude(tags, semVer)) {
       if (semVer.patch > 0) {
         throw new Error(
           `Version in package.json is ${version} but tag already exists. Set patch to 0 to enable auto-increment.`,
@@ -56,6 +56,20 @@ export function getNextVersion(version: string, tags: string[]): string {
   }
 
   return nextVer.version;
+}
+
+function tagsInclude(tags: string[], v: SemVer): boolean {
+  for (const tag of tags) {
+    const vt = new SemVer(tag);
+    if (vt.compare(v) === 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isPreRelease(semVer: SemVer): boolean {
+  return semVer.prerelease.length > 0;
 }
 
 function isSameRelease(v1: SemVer, v2: SemVer): boolean {
