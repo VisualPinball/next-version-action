@@ -120,10 +120,14 @@ function run() {
             console.log(`tags: ${tags}`);
             const nextVersion = getNextVersion(version, tags);
             const tagPrefix = core.getInput('tagPrefix') || '';
+            const nextTag = tagPrefix + nextVersion;
+            const isPr = isPreRelease(new semver_1.SemVer(nextVersion));
             core.setOutput('nextVersion', nextVersion);
-            core.setOutput('nextTag', tagPrefix + nextVersion);
-            core.setOutput('isPrerelease', isPreRelease(new semver_1.SemVer(nextVersion)));
+            core.setOutput('nextTag', nextTag);
+            core.setOutput('isPrerelease', isPr);
             console.log(`nextVersion: ${nextVersion}`);
+            console.log(`nextTag: ${nextTag}`);
+            console.log(`isPrerelease: ${isPr}`);
         }
         catch (error) {
             core.setFailed(error.message);
