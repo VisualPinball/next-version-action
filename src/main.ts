@@ -91,8 +91,10 @@ async function run(): Promise<void> {
     console.log(`tags: ${tags}`);
 
     const nextVersion = getNextVersion(version, tags);
-    const prefix = core.getInput('versionPrefix') || '';
-    core.setOutput('nextVersion', prefix + nextVersion);
+    const tagPrefix = core.getInput('tagPrefix') || '';
+    core.setOutput('nextVersion', nextVersion);
+    core.setOutput('nextTag', tagPrefix + nextVersion);
+    core.setOutput('isPrerelease', isPreRelease(new SemVer(nextVersion)));
     console.log(`nextVersion: ${nextVersion}`);
   } catch (error) {
     core.setFailed(error.message);

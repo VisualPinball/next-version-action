@@ -25,13 +25,15 @@ This action was inspired by [latest-tag](https://github.com/EndBug/latest-tag) a
 
 You should use this action in a workflow immediately after checkout. The following outputs will be set:
 
-- `version`: version from package.json
-- `tags`: reverse sorted git tags in semver format
-- `nextVersion`: calculated next version (see table above)
+- `version` - version from package.json
+- `tags` - reverse sorted git tags in semver format
+- `nextVersion` - calculated next version (see table above)
+- `nextTag` - calculated next version, prefixed (see below)
+- `isPrerelease` - true if pre-release, false otherwise.
 
 For inputs, the following options are available:
 
-- `versionPrefix`: adds a string to the tag.
+- `tagPrefix` - adds a string to the `nextTag` (default: '').
 
 Example yml:
 
