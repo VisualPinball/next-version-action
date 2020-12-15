@@ -45,9 +45,9 @@ const fs_1 = __webpack_require__(5747);
 const semver_1 = __webpack_require__(1383);
 const git_semver_tags_1 = __importDefault(__webpack_require__(2408));
 const core = __importStar(__webpack_require__(2186));
-function getSortedTags() {
+function getTags() {
     return __awaiter(this, void 0, void 0, function* () {
-        return semver_1.rsort(yield util_1.promisify(git_semver_tags_1.default)());
+        return yield util_1.promisify(git_semver_tags_1.default)();
     });
 }
 /**
@@ -60,18 +60,26 @@ function getSortedTags() {
  */
 function getNextVersion(version, tags) {
     const semVer = new semver_1.SemVer(version);
+    tags = semver_1.rsort(tags);
     if (semVer === null || semVer.prerelease.length === 1) {
-        throw new Error(`Invalid semver - ${version}`);
+        throw new Error(`Invalid semver: ${version}`);
     }
     let nextVer = null;
-    if (semVer.prerelease.length === 0) {
-        if (tags.includes(semVer.version)) {
+    if (!isPreRelease(semVer)) {
+        if (tagsInclude(tags, semVer)) {
+            if (semVer.patch > 0) {
+                throw new Error(`Version in package.json is ${version} but tag already exists. Set patch to 0 to enable auto-increment.`);
+            }
             nextVer = new semver_1.SemVer(tags[0]).inc('patch');
         }
     }
     else {
         for (const tag of tags) {
-            if (tag.startsWith(semVer.version.substring(0, semVer.version.lastIndexOf('.') + 1))) {
+            const tagSemVer = new semver_1.SemVer(tag);
+            if (isSameRelease(tagSemVer, semVer)) {
+                if (preReleaseNumber(semVer) > 0) {
+                    throw new Error(`Version in package.json is ${version} but tag already exists. Set pre-release to 0 to enable auto-increment.`);
+                }
                 nextVer = new semver_1.SemVer(tag).inc('prerelease');
                 break;
             }
@@ -83,17 +91,38 @@ function getNextVersion(version, tags) {
     return nextVer.version;
 }
 exports.getNextVersion = getNextVersion;
+function tagsInclude(tags, v) {
+    for (const tag of tags) {
+        const vt = new semver_1.SemVer(tag);
+        if (vt.compare(v) === 0) {
+            return true;
+        }
+    }
+    return false;
+}
+function isPreRelease(semVer) {
+    return semVer.prerelease.length > 0;
+}
+function isSameRelease(v1, v2) {
+    return v1.major === v2.major && v1.minor === v2.minor && v1.patch === v2.patch;
+}
+function preReleaseNumber(v) {
+    return v.prerelease[1];
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const version = JSON.parse(fs_1.readFileSync('package.json', 'utf8')).version;
             core.setOutput('version', version);
             console.log(`version: ${version}`);
-            const tags = yield getSortedTags();
+            const tags = yield getTags();
             core.setOutput('tags', tags);
             console.log(`tags: ${tags}`);
             const nextVersion = getNextVersion(version, tags);
+            const tagPrefix = core.getInput('tagPrefix') || '';
             core.setOutput('nextVersion', nextVersion);
+            core.setOutput('nextTag', tagPrefix + nextVersion);
+            core.setOutput('isPrerelease', isPreRelease(new semver_1.SemVer(nextVersion)));
             console.log(`nextVersion: ${nextVersion}`);
         }
         catch (error) {
