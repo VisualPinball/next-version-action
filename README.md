@@ -43,7 +43,7 @@ Example yml:
           fetch-depth: 0
       - name: Fetch next version
         id: nextVersion
-        uses: freezy/VisualPinball.NextVersionAction@v0.1.2
+        uses: freezy/VisualPinball.NextVersionAction@v0.1.3
       - name: Log version and next version
         run: |
           echo "${{ steps.nextVersion.outputs.version }}"
