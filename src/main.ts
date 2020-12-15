@@ -77,7 +77,8 @@ async function run(): Promise<void> {
     console.log(`tags: ${tags}`);
 
     const nextVersion = getNextVersion(version, tags);
-    core.setOutput('nextVersion', nextVersion);
+    const prefix = core.getInput('versionPrefix') || '';
+    core.setOutput('nextVersion', prefix + nextVersion);
     console.log(`nextVersion: ${nextVersion}`);
   } catch (error) {
     core.setFailed(error.message);

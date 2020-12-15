@@ -29,9 +29,13 @@ You should use this action in a workflow immediately after checkout. The followi
 - `tags`: reverse sorted git tags in semver format
 - `nextVersion`: calculated next version (see table above)
 
+For inputs, the following options are available:
+
+- `versionPrefix`: adds a string to the tag.
+
 Example yml:
 
-```
+```yaml
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -62,15 +66,18 @@ Run the tests
 ```bash
 $ npm test
 
- PASS  __tests__/main.test.ts
-  ✓ VPE Versioning #1 (2ms)
-  ✓ VPE Versioning #2 (1ms)
-  ✓ VPE Versioning #3
-  ✓ VPE Versioning #4
-  ✓ VPE Versioning #5 (1ms)
-  ✓ VPE Versioning #6
-  ✓ VPE Versioning #7
-  ✓ VPE Versioning #8
-
-...
+  PASS  __tests__/main.test.ts
+  √ should use version from package.json if no tag is available (2ms)
+  √ should bump version if same tag is available
+  √ should bump version if same tag is available but prefixed
+  √ should bump version if same tag is available but not prefixed (1ms)
+  √ should use bump latest pre-release tag if multiple tags are available
+  √ should use bump latest tag if multiple tags are available sorted the other way around
+  √ should use bump latest tag if one tag was skipped (1ms)
+  √ should use major version from major package.json if no tag matched
+  √ should use pre-release version from pre-release package.json if no tag matched
+  √ should bump final version if tag already exists and ends with 0
+  √ should throw an error if final version is already tagged and does not end with 0 (9ms)
+  √ should throw an error if pre-release version is already tagged and does not end with 0
+  √ should throw an error for wrong versions (2ms)
 ```
