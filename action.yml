@@ -7,13 +7,15 @@ inputs:
     description: 'Prefix when tagging the release'
 outputs:
   version:
-    description: 'Current version in package.json'
+    description: 'Version in package.json'
   tags:
-    description: 'Reverse sorted git tags in semver format'
+    description: 'Git tags in semver format'
   nextVersion:
     description: 'Computed next version'
   nextTag:
     description: 'Computed next version with prefix'
+  isBump:
+    description: 'If true, the computed next version differs from the version in package.json'
   isPrerelease:
     description: 'If true, the version is a pre-release'
 runs:

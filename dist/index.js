@@ -54,9 +54,6 @@ function getTags() {
  * 1. grab major, minor, patch, prerelease name, prerelease number
  * 2. if all of those 5 (or 3, if no prerelease naming) already exist as tag, grab latest and auto-increment.
  * 3. otherwise, don't increment
- *
- * TODO: throwing an error (i.e. fail build) when last number != 0 and tag already exists is okay too
- *       (e.g. 0.1.2 in package.json but 0.1.2 already exists as tag)
  */
 function getNextVersion(version, tags) {
     const semVer = new semver_1.SemVer(version);
@@ -65,11 +62,8 @@ function getNextVersion(version, tags) {
         throw new Error(`Invalid semver: ${version}`);
     }
     let nextVer = null;
-    if (!isPreRelease(semVer)) {
+    if (!isPrerelease(semVer)) {
         if (tagsInclude(tags, semVer)) {
-            if (semVer.patch > 0) {
-                throw new Error(`Version in package.json is ${version} but tag already exists. Set patch to 0 to enable auto-increment.`);
-            }
             nextVer = new semver_1.SemVer(tags[0]).inc('patch');
         }
     }
@@ -77,9 +71,6 @@ function getNextVersion(version, tags) {
         for (const tag of tags) {
             const tagSemVer = new semver_1.SemVer(tag);
             if (isSameRelease(tagSemVer, semVer)) {
-                if (preReleaseNumber(semVer) > 0) {
-                    throw new Error(`Version in package.json is ${version} but tag already exists. Set pre-release to 0 to enable auto-increment.`);
-                }
                 nextVer = new semver_1.SemVer(tag).inc('prerelease');
                 break;
             }
@@ -100,14 +91,14 @@ function tagsInclude(tags, v) {
     }
     return false;
 }
-function isPreRelease(semVer) {
+function isPrerelease(semVer) {
     return semVer.prerelease.length > 0;
 }
 function isSameRelease(v1, v2) {
     return v1.major === v2.major && v1.minor === v2.minor && v1.patch === v2.patch;
 }
-function preReleaseNumber(v) {
-    return v.prerelease[1];
+function isBump(v1, v2) {
+    return semver_1.neq(v1, v2);
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -119,14 +110,17 @@ function run() {
             core.setOutput('tags', tags);
             console.log(`tags: ${tags}`);
             const nextVersion = getNextVersion(version, tags);
+            core.setOutput('nextVersion', nextVersion);
+            console.log(`nextVersion: ${nextVersion}`);
             const tagPrefix = core.getInput('tagPrefix') || '';
             const nextTag = tagPrefix + nextVersion;
-            const isPr = isPreRelease(new semver_1.SemVer(nextVersion));
-            core.setOutput('nextVersion', nextVersion);
             core.setOutput('nextTag', nextTag);
-            core.setOutput('isPrerelease', isPr);
-            console.log(`nextVersion: ${nextVersion}`);
             console.log(`nextTag: ${nextTag}`);
+            const isBm = isBump(new semver_1.SemVer(version), new semver_1.SemVer(nextVersion));
+            core.setOutput('isBump', isBm);
+            console.log(`isBump: ${isBm}`);
+            const isPr = isPrerelease(new semver_1.SemVer(nextVersion));
+            core.setOutput('isPrerelease', isPr);
             console.log(`isPrerelease: ${isPr}`);
         }
         catch (error) {
