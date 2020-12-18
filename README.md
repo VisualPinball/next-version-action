@@ -25,11 +25,12 @@ This action was inspired by [latest-tag](https://github.com/EndBug/latest-tag) a
 
 You should use this action in a workflow immediately after checkout. The following outputs will be set:
 
-- `version` - version from package.json
-- `tags` - reverse sorted git tags in semver format
-- `nextVersion` - calculated next version (see table above)
-- `nextTag` - calculated next version, prefixed (see below)
-- `isPrerelease` - true if pre-release, false otherwise.
+- `version` - version in package.json
+- `tags` - git tags in semver format
+- `nextVersion` - computed next version (see table above)
+- `nextTag` - computed next version, prefixed (see below)
+- `isBump` - true if computed next version differs from version in package.json, false otherwise
+- `isPrerelease` - true if pre-release, false otherwise
 
 For inputs, the following options are available:
 
@@ -43,11 +44,16 @@ Example yml:
           fetch-depth: 0
       - name: Fetch next version
         id: nextVersion
-        uses: freezy/VisualPinball.NextVersionAction@v0.1.4
-      - name: Log version and next version
+        uses: VisualPinball/VisualPinball.NextVersionAction@v0.1.5
+        with:
+          tagPrefix: 'v'
+      - name: Log next version outputs
         run: |
           echo "${{ steps.nextVersion.outputs.version }}"
           echo "${{ steps.nextVersion.outputs.nextVersion }}"
+          echo "${{ steps.nextVersion.outputs.nextTag }}"
+          echo "${{ steps.nextVersion.outputs.isBump }}"
+          echo "${{ steps.nextVersion.outputs.isPrerelease }}"
 ```           
 
 **Note:** For this action to work properly, make sure to configure `actions/checkout@v2` with a `fetch-depth: 0`.
@@ -79,7 +85,5 @@ $ npm test
   √ should use major version from major package.json if no tag matched
   √ should use pre-release version from pre-release package.json if no tag matched
   √ should bump final version if tag already exists and ends with 0
-  √ should throw an error if final version is already tagged and does not end with 0 (9ms)
-  √ should throw an error if pre-release version is already tagged and does not end with 0
   √ should throw an error for wrong versions (2ms)
 ```
