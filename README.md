@@ -44,7 +44,7 @@ Example yml:
           fetch-depth: 0
       - name: Fetch next version
         id: nextVersion
-        uses: VisualPinball/VisualPinball.NextVersionAction@v0.1.5
+        uses: VisualPinball/next-version-action@v0.1.6
         with:
           tagPrefix: 'v'
       - name: Log next version outputs

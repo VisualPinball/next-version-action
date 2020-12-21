@@ -1,6 +1,6 @@
 {
-  "name": "visualpinball-next-version-action",
-  "version": "0.1.5",
+  "name": "next-version-action",
+  "version": "0.1.6",
   "description": "Action used for determining the next version of VisualPinball.* projects.",
   "main": "lib/main.js",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jsm174/VisualPinball.NextVersionAction.git"
+    "url": "git+https://github.com/VisualPinball/next-version-action.git"
   },
   "keywords": [
     "Pinball",
