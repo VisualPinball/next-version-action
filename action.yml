@@ -2,6 +2,9 @@ name: 'VisualPinball.NextReleaseAction'
 description: 'Action used for determining the next version of VisualPinball.* projects.'
 author: 'Jason Millard <jsm174@gmail.com>'
 inputs:
+  path:
+    required: false
+    description: 'Path to folder containing package.json'
   tagPrefix:
     required: false
     description: 'Prefix when tagging the release'
