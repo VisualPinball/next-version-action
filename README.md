@@ -34,6 +34,7 @@ You should use this action in a workflow immediately after checkout. The followi
 
 For inputs, the following options are available:
 
+- `path` - path to folder containing package.json (leave blank for root folder).
 - `tagPrefix` - adds a string to the `nextTag` (default: '').
 
 Example yml:
@@ -44,7 +45,7 @@ Example yml:
           fetch-depth: 0
       - name: Fetch next version
         id: nextVersion
-        uses: VisualPinball/next-version-action@v0.1.6
+        uses: VisualPinball/next-version-action@v0.1.7
         with:
           tagPrefix: 'v'
       - name: Log next version outputs

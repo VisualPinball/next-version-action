@@ -69,7 +69,9 @@ function isBump(v1: SemVer, v2: SemVer): boolean {
 
 async function run(): Promise<void> {
   try {
-    const version = JSON.parse(readFileSync('package.json', 'utf8')).version;
+    const path = core.getInput('path') || '.';
+    
+    const version = JSON.parse(readFileSync(`${path}/package.json`, 'utf8')).version;
     core.setOutput('version', version);
     console.log(`version: ${version}`);
 

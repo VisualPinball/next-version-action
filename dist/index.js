@@ -103,7 +103,8 @@ function isBump(v1, v2) {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const version = JSON.parse(fs_1.readFileSync('package.json', 'utf8')).version;
+            const path = core.getInput('path') || '.';
+            const version = JSON.parse(fs_1.readFileSync(`${path}/package.json`, 'utf8')).version;
             core.setOutput('version', version);
             console.log(`version: ${version}`);
             const tags = yield getTags();
