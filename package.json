@@ -26,7 +26,7 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "@actions/core": "^1.2.6",
+    "@actions/core": "^1.11.1",
     "git-semver-tags": "^4.1.1",
     "semver": "^7.3.4"
   },
