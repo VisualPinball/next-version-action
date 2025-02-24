@@ -1,4 +1,4 @@
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import { readFileSync } from 'fs';
 import { SemVer, rsort, neq } from 'semver';
 import gitSemVerTags from 'git-semver-tags';
@@ -67,7 +67,7 @@ function isBump(v1: SemVer, v2: SemVer): boolean {
   return neq(v1, v2);
 }
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     const path = core.getInput('path') || '.';
 
@@ -95,7 +95,7 @@ async function run(): Promise<void> {
     const isPr = isPrerelease(new SemVer(nextVersion));
     core.setOutput('isPrerelease', isPr);
     console.log(`isPrerelease: ${isPr}`);
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message);
   }
 }
