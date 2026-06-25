@@ -22,5 +22,5 @@ outputs:
   isPrerelease:
     description: 'If true, the version is a pre-release'
 runs:
-  using: 'node12'
+  using: 'node24'
   main: 'dist/index.js'
